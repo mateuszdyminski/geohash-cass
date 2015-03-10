@@ -2,6 +2,8 @@ package com.geohash.dao;
 
 import com.geohash.model.CassConfig;
 import com.geohash.model.GeoData;
+import com.geohash.util.SerializerKryo;
+import com.geohash.util.SerializerNetty;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +24,7 @@ public class GeohashDaoTest {
     @Before
     public void setup() {
         CassConfig config = new CassConfig();
-        geohashDao = new GeohashDao(config);
+        geohashDao = new GeohashDao(config, new SerializerKryo());
         geohashDao.truncateColumnFamily();
     }
 

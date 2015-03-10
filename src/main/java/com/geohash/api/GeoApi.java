@@ -8,10 +8,7 @@ import com.github.davidmoten.geo.GeoHash;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * User: mdyminski
@@ -26,6 +23,10 @@ public class GeoApi {
 
     public GeoApi(GeohashDao dao) {
         this.dao = dao;
+    }
+
+    public Set<String> getCoverageInGeoHash(Point topLeft, Point bottomRight, int level) {
+        return GeoHash.coverBoundingBox(topLeft.getLatitude(), topLeft.getLongitude(), bottomRight.getLatitude(), bottomRight.getLongitude(), level).getHashes();
     }
 
     public List<GeoData> getCoverageV1(Point topLeft, Point bottomRight) {

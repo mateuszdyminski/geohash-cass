@@ -1,6 +1,5 @@
 package com.geohash.dao;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.BatchStatement.Type;
 
-import com.geohash.util.Serializer;
+import com.geohash.util.ISerializer;
 import com.geohash.model.Buffer;
 import com.geohash.model.CassConfig;
 import com.geohash.model.GeoData;
@@ -45,10 +44,11 @@ public class GeohashDao extends Dao {
 
     private final Buffer<GeoData> geoDataList = new Buffer<>();
 
-    private final Serializer serializer = new Serializer();
+    private final ISerializer<GeoData> serializer;
 
-    public GeohashDao(CassConfig configuration) {
+    public GeohashDao(CassConfig configuration, ISerializer ser) {
         super(configuration, COLUMN_FAMILY_NAME);
+        this.serializer = ser;
     }
 
     private PreparedStatement getInsertSingleStatement() {
@@ -234,7 +234,7 @@ public class GeohashDao extends Dao {
 
     private BoundStatement getBoundStatement(GeoData geodata) {
         return getInsertSingleStatement().bind(geodata.getGeoHash(), geodata.getTimestamp(),
-                ByteBuffer.wrap(serializer.toBytes(geodata)));
+                serializer.toBuffer(geodata));
     }
 
     private List<GeoData> getGeoDataFromResult(ResultSet res) {
@@ -249,10 +249,7 @@ public class GeohashDao extends Dao {
     }
 
     private GeoData getGeoData(com.datastax.driver.core.Row one) {
-        ByteBuffer bb = one.getBytes("geodata");
-        byte[] b = new byte[bb.remaining()];
-        bb.get(b);
-        return serializer.fromBytes(b, GeoData.class);
+        return serializer.fromBuffer(one.getBytes("geodata"));
     }
 }
 

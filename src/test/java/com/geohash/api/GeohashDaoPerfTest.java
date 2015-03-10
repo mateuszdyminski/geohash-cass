@@ -8,6 +8,8 @@ import com.geohash.dao.GeohashDao;
 import com.geohash.model.CassConfig;
 import com.geohash.model.GeoData;
 import com.geohash.model.Point;
+import com.geohash.util.SerializerKryo;
+import com.geohash.util.SerializerNetty;
 import com.github.davidmoten.geo.Coverage;
 import com.github.davidmoten.geo.GeoHash;
 import org.apache.logging.log4j.LogManager;
@@ -59,7 +61,7 @@ public class GeohashDaoPerfTest extends AbstractBenchmark {
     @BeforeClass
     public static void setup() {
         config = new CassConfig();
-        dao = new GeohashDao(config);
+        dao = new GeohashDao(config, new SerializerKryo());
         api = new GeoApi(dao);
 
         if (config.insertSamples()) {
@@ -198,4 +200,12 @@ public class GeohashDaoPerfTest extends AbstractBenchmark {
     public void big_manyGeoHashes_rx() {
         assertThat(api.getCoverageV3_rx_many(bigQueryTopLeft, bigQueryBottomRight).size(), is(BIG_GEO_DATA_NUM));
     }
+
+    // Tests: kryo vs java nio
+    @Test
+    @BenchmarkOptions(benchmarkRounds = 3, warmupRounds = 0)
+    public void mid_singleGeoHash_() {
+        assertThat(api.getCoverageV1(queryTopLeft, queryBottomRight).size(), is(GEO_DATA_NUM));
+    }
+
 }

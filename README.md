@@ -7,6 +7,7 @@ This project contains Cassandra queries performance tests.
 ## Requirements
 
 docker
+
 cassandra (we only need cqlsh client)
 
 ## Pre steps

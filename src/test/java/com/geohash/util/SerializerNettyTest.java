@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SerializerNettyTest {
 
-    private ISerializer<GeoData> serializer = new SerializerNetty();
+    private ISerializer<GeoData> serializer = new GeoSerializerNetty();
 
     @Test
     public void perfTest() {

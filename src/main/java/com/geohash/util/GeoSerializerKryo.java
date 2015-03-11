@@ -5,10 +5,18 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.geohash.model.GeoData;
+import org.xerial.snappy.Snappy;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class SerializerKryo implements ISerializer<GeoData> {
+public class GeoSerializerKryo implements ISerializer<GeoData> {
+
+    private boolean compression;
+
+    public GeoSerializerKryo(boolean compression) {
+        this.compression = compression;
+    }
 
     @Override
     public ByteBuffer toBuffer(GeoData toSerialize) {
@@ -17,7 +25,16 @@ public class SerializerKryo implements ISerializer<GeoData> {
 
         KRYO.get().writeObject(output, toSerialize);
         output.close();
-        return ByteBuffer.wrap(output.toBytes());
+
+        try {
+            if (compression) {
+                return ByteBuffer.wrap(Snappy.compress(output.toBytes()));
+            } else {
+                return ByteBuffer.wrap(output.toBytes());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Dupa");
+        }
     }
 
     @Override
@@ -25,7 +42,16 @@ public class SerializerKryo implements ISerializer<GeoData> {
         byte[] b = new byte[buffer.remaining()];
         buffer.get(b);
 
-        Input input = new Input(b);
+        Input input;
+        try {
+            if (compression) {
+                input = new Input(Snappy.uncompress(b));
+            } else {
+                input = new Input(b);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Dupa");
+        }
         GeoData deserialized = KRYO.get().readObject(input, GeoData.class);
         input.close();
 
@@ -41,8 +67,8 @@ public class SerializerKryo implements ISerializer<GeoData> {
         }
     };
 
-
     private static class GeoSerializer extends Serializer<GeoData> {
+
         public void write (Kryo kryo, Output output, GeoData geo) {
             output.writeString(geo.getGeoHash());
             output.writeLong(geo.getTimestamp());

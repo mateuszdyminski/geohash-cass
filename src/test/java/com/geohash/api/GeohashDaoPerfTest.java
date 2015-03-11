@@ -8,8 +8,7 @@ import com.geohash.dao.GeohashDao;
 import com.geohash.model.CassConfig;
 import com.geohash.model.GeoData;
 import com.geohash.model.Point;
-import com.geohash.util.SerializerKryo;
-import com.geohash.util.SerializerNetty;
+import com.geohash.util.GeoSerializerKryo;
 import com.github.davidmoten.geo.Coverage;
 import com.github.davidmoten.geo.GeoHash;
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +18,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.io.IOException;
 import java.util.Date;
 
 import static org.hamcrest.core.Is.is;
@@ -61,7 +59,7 @@ public class GeohashDaoPerfTest extends AbstractBenchmark {
     @BeforeClass
     public static void setup() {
         config = new CassConfig();
-        dao = new GeohashDao(config, new SerializerKryo());
+        dao = new GeohashDao(config, new GeoSerializerKryo(false));
         api = new GeoApi(dao);
 
         if (config.insertSamples()) {

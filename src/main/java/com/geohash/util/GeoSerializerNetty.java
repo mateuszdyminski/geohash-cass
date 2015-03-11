@@ -12,7 +12,7 @@ import com.google.common.base.Charsets;
 /**
  * User: mdyminski
  */
-public class SerializerNetty implements ISerializer<GeoData> {
+public class GeoSerializerNetty implements ISerializer<GeoData> {
 
     private static final int TOTAL_SIZE = 36;
 

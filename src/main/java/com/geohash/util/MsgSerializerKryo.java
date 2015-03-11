@@ -71,7 +71,7 @@ public class MsgSerializerKryo implements ISerializer<Message> {
         @Override
         protected Kryo initialValue() {
             Kryo k = new Kryo();
-            k.register(Message.class, new JavaSerializer());
+            k.register(Message.class, new MsgSerializer());
             return k;
         }
     };
@@ -92,6 +92,7 @@ public class MsgSerializerKryo implements ISerializer<Message> {
 
         public Message read (Kryo kryo, Input input, Class<Message> type) {
             Message  msg = new Message();
+
             msg.setTraceType(Enums.TraceType.fromValue(input.readInt()));
             msg.setDirection(Enums.Direction.fromValue(input.readInt()));
             msg.setInterfaceName(Enums.Interface.fromValue(input.readInt()));
@@ -99,6 +100,7 @@ public class MsgSerializerKryo implements ISerializer<Message> {
             msg.setProtocolFormat(Enums.ProtocolFormat.fromValue(input.readInt()));
             msg.setProtocolMessageType(Enums.ProtocolMessageType.fromValue(input.readInt(),msg.getProtocol()));
             msg.setData(input.readBytes(input.readInt()));
+
             return msg;
         }
     }

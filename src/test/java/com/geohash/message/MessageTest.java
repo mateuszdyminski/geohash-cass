@@ -71,7 +71,7 @@ public class MessageTest {
     @Test
     public void serializationPertTest_kryo() {
         // given
-        int loopRound = 1000000;
+        int loopRound = 100000000;
         Message msg = prepareMsg();
 
         // when

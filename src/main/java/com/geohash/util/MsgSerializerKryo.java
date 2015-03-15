@@ -4,8 +4,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.serializers.JavaSerializer;
-import com.geohash.message.Enums;
 import com.geohash.message.Message;
 import org.xerial.snappy.Snappy;
 
@@ -30,7 +28,7 @@ public class MsgSerializerKryo implements ISerializer<Message> {
     @Override
     public ByteBuffer toBuffer(Message toSerialize) {
         int size = 32 + toSerialize.getData().length;
-        Output output = new Output(10000, 10000);
+        Output output = new Output(size, size);
 
         KRYO.get().writeObject(output, toSerialize);
         output.close();
@@ -80,12 +78,12 @@ public class MsgSerializerKryo implements ISerializer<Message> {
     private static class MsgSerializer extends Serializer<Message> {
 
         public void write (Kryo kryo, Output output, Message msg) {
-            output.writeInt(msg.getTraceType().value());
-            output.writeInt(msg.getDirection().value());
-            output.writeInt(msg.getInterfaceName().value());
-            output.writeInt(msg.getProtocol().value());
-            output.writeInt(msg.getProtocolFormat().value());
-            output.writeInt(msg.getProtocolMessageType().value());
+            output.writeInt(msg.getTraceType());
+            output.writeInt(msg.getDirection());
+            output.writeInt(msg.getInterfaceName());
+            output.writeInt(msg.getProtocol());
+            output.writeInt(msg.getProtocolFormat());
+            output.writeInt(msg.getProtocolMessageType());
             output.writeInt(msg.getData().length);
             output.writeBytes(msg.getData());
         }
@@ -93,12 +91,12 @@ public class MsgSerializerKryo implements ISerializer<Message> {
         public Message read (Kryo kryo, Input input, Class<Message> type) {
             Message  msg = new Message();
 
-            msg.setTraceType(Enums.TraceType.fromValue(input.readInt()));
-            msg.setDirection(Enums.Direction.fromValue(input.readInt()));
-            msg.setInterfaceName(Enums.Interface.fromValue(input.readInt()));
-            msg.setProtocol(Enums.TraceProtocol.fromValue(input.readInt()));
-            msg.setProtocolFormat(Enums.ProtocolFormat.fromValue(input.readInt()));
-            msg.setProtocolMessageType(Enums.ProtocolMessageType.fromValue(input.readInt(),msg.getProtocol()));
+            msg.setTraceType(input.readInt());
+            msg.setDirection(input.readInt());
+            msg.setInterfaceName(input.readInt());
+            msg.setProtocol(input.readInt());
+            msg.setProtocolFormat(input.readInt());
+            msg.setProtocolMessageType(input.readInt());
             msg.setData(input.readBytes(input.readInt()));
 
             return msg;

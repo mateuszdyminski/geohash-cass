@@ -37,7 +37,7 @@ public class SerializerKryoTest {
     @Test
     public void perfTestSnappy() {
         // given
-        int loopRound = 10000000;
+        int loopRound = 1000000;
         GeoData geo = prepareData();
         long size = 0;
         serializer = new GeoSerializerKryo(true);

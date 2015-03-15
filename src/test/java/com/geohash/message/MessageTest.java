@@ -27,9 +27,8 @@ public class MessageTest {
         Message msg1 = Message.decode(bb);
 
         // then
-        assertThat(msg.getCallId(), is(msg1.getCallId()));
+        assertThat(msg.getId(), is(msg1.getId()));
         assertThat(msg.getTraceType(), is(msg1.getTraceType()));
-        assertThat(msg.getCrnti(), is(msg1.getCrnti()));
         assertThat(msg.getData(), is(msg1.getData()));
         assertThat(msg.getProtocolMessageType(), is(msg1.getProtocolMessageType()));
         assertThat(msg.getProtocolFormat(), is(msg1.getProtocolFormat()));
@@ -59,9 +58,8 @@ public class MessageTest {
         Message msg1 = serializer.fromBuffer(bb);
 
         // then
-        assertThat(msg.getCallId(), is(msg1.getCallId()));
+        assertThat(msg.getId(), is(msg1.getId()));
         assertThat(msg.getTraceType(), is(msg1.getTraceType()));
-        assertThat(msg.getCrnti(), is(msg1.getCrnti()));
         assertThat(msg.getData(), is(msg1.getData()));
         assertThat(msg.getProtocolMessageType(), is(msg1.getProtocolMessageType()));
         assertThat(msg.getProtocolFormat(), is(msg1.getProtocolFormat()));
@@ -71,7 +69,7 @@ public class MessageTest {
     @Test
     public void serializationPertTest_kryo() {
         // given
-        int loopRound = 100000000;
+        int loopRound = 1000000;
         Message msg = prepareMsg();
 
         // when
@@ -88,12 +86,12 @@ public class MessageTest {
     private Message prepareMsg() {
         Message msg = new Message();
         msg.setData("00010060000008000000020000000100010000024002000000420004000000000035000E00001B00090100616263640000000068000100006B0004200080000028002100AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".getBytes());
-        msg.setTraceType(Enums.TraceType.CELL_TRACE);
-        msg.setDirection(Enums.Direction.DOWN);
-        msg.setInterfaceName(Enums.Interface.E_UU);
-        msg.setProtocol(Enums.TraceProtocol.MAC);
-        msg.setProtocolFormat(Enums.ProtocolFormat.AMD_PDU);
-        msg.setProtocolMessageType(Enums.ProtocolMessageType.fromValue(1,msg.getProtocol()));
+        msg.setTraceType(1);
+        msg.setDirection(2);
+        msg.setInterfaceName(3);
+        msg.setProtocol(4);
+        msg.setProtocolFormat(5);
+        msg.setProtocolMessageType(6);
 
         return msg;
     }
